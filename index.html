@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lens Uploads</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 980px; margin: 40px auto; padding: 0 16px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    label { font-weight: 600; }
+    input, select, button { padding: 10px; border-radius: 10px; border: 1px solid #ccc; }
+    button { cursor: pointer; }
+    .muted { color: #666; font-size: 0.95rem; }
+    .ok { color: #0a7a0a; }
+    .err { color: #b00020; }
+    pre { background: #f6f8fa; padding: 12px; border-radius: 10px; overflow: auto; }
+    .pill { padding: 4px 10px; border-radius: 999px; background: #f1f1f1; font-size: 0.9rem; }
+    .radio { display: inline-flex; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid #ccc; border-radius: 10px; }
+    .radio label { font-weight: 500; }
+  </style>
+</head>
+<body>
+  <h1>Lens Uploads</h1>
+  <p class="muted">
+    Choose a format:
+    <span class="pill">IN8</span> = <b>LMS BIN, OPC </b> or
+    <span class="pill">IN9</span> = <b>Cost, OPC </b>.
+    </p>
+
+  <div class="card">
+    <div class="row" style="margin-bottom: 12px;">
+      <div style="flex: 1 1 340px;">
+        <label for="fileInput">Upload .xlsx</label><br />
+        <input id="fileInput" type="file" accept=".xlsx" />
+      </div>
+
+      <div style="flex: 1 1 280px;">
+        <label for="sheetSelect">Sheet</label><br />
+        <select id="sheetSelect" disabled>
+          <option value="">(Upload a file first)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 12px;">
+      <div class="radio">
+        <input type="radio" id="fmtIN8" name="fmt" value="IN8" checked />
+        <label for="fmtIN8">IN8 (LMS BIN, OPC)</label>
+      </div>
+
+      <div class="radio">
+        <input type="radio" id="fmtIN9" name="fmt" value="IN9" />
+        <label for="fmtIN9">IN9 (Cost, OPC)</label>
+      </div>
+
+      <label class="muted" style="margin-left:auto;">
+        <input id="keepBlankRows" type="checkbox" />
+        Keep blank rows (usually leave off)
+      </label>
+    </div>
+
+    <div class="row" style="margin-bottom: 12px;">
+      <button id="convertBtn" disabled>Convert & Download</button>
+    </div>
+
+    <div id="status" class="muted"></div>
+
+    <h3 style="margin-top:16px;">Preview (first 12 rows)</h3>
+    <pre id="preview">(no data yet)</pre>
+  </div>
+
+  <!-- SheetJS (xlsx) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const sheetSelect = document.getElementById("sheetSelect");
+    const convertBtn = document.getElementById("convertBtn");
+    const keepBlankRows = document.getElementById("keepBlankRows");
+    const statusEl = document.getElementById("status");
+    const previewEl = document.getElementById("preview");
+
+    let workbook = null;
+    let originalFileName = "output";
+
+    // Change this if your cost header name in Excel is different
+    const COST_HEADER = "UNIT CO";
+
+    function setStatus(msg, type = "") {
+      statusEl.className = type ? type : "muted";
+      statusEl.textContent = msg;
+    }
+
+    function safeBaseName(name) {
+      const base = (name || "output").replace(/\.[^/.]+$/, "");
+      return base.replace(/[^\w\-]+/g, "_");
+    }
+
+    function updateSheetDropdown(wb) {
+      sheetSelect.innerHTML = "";
+      wb.SheetNames.forEach((s, idx) => {
+        const opt = document.createElement("option");
+        opt.value = s;
+        opt.textContent = `${idx + 1}. ${s}`;
+        sheetSelect.appendChild(opt);
+      });
+      sheetSelect.disabled = false;
+      sheetSelect.selectedIndex = 0;
+    }
+
+    function escapeCsvValue(value) {
+      value = (value ?? "").toString();
+      const mustQuote = value.includes(",") || value.includes('"') || value.includes("\n") || value.includes("\r");
+      value = value.replace(/"/g, '""');
+      return mustQuote ? `"${value}"` : value;
+    }
+
+    function previewFirstRows(ws) {
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: "", blankrows: false });
+      const first = rows.slice(0, 12);
+      if (!first.length) return "(sheet is empty)";
+      return first.map(r => (r || []).map(v => (v ?? "")).join(" | ")).join("\n");
+    }
+
+    // Find column index by header name (case-insensitive)
+    function findHeaderIndex(headerRow, desiredHeader) {
+      const want = desiredHeader.toLowerCase().trim();
+      const normalized = headerRow.map(h => (h ?? "").toString().trim());
+      const lower = normalized.map(h => h.toLowerCase());
+
+      // exact
+      let idx = lower.indexOf(want);
+      if (idx !== -1) return idx;
+
+      // starts-with (handles slight truncation)
+      idx = lower.findIndex(h => h.startsWith(want));
+      if (idx !== -1) return idx;
+
+      // contains
+      idx = lower.findIndex(h => h.includes(want));
+      if (idx !== -1) return idx;
+
+      return -1;
+    }
+
+    function readRows(ws) {
+      return XLSX.utils.sheet_to_json(ws, {
+        header: 1,
+        raw: false,
+        defval: "",
+        blankrows: keepBlankRows.checked
+      });
+    }
+
+    function downloadTextFile(text, filename) {
+      const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function getSelectedFormat() {
+      const el = document.querySelector('input[name="fmt"]:checked');
+      return el ? el.value : "IN8";
+    }
+
+    // IN8: LMS BIN, OPC Code (no header)
+    function buildIN8(rows, idxLms, idxOpc) {
+      const out = [];
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i] || [];
+        const lms = (r[idxLms] ?? "").toString().trim();
+        const opc = (r[idxOpc] ?? "").toString().trim();
+        if (!lms && !opc) continue;
+        out.push([lms, opc].map(escapeCsvValue).join(","));
+      }
+      return out.join("\n");
+    }
+
+    // IN9: Cost, OPC Code (no header)
+    function buildIN9(rows, idxCost, idxOpc) {
+      const out = [];
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i] || [];
+        const cost = (r[idxCost] ?? "").toString().trim();
+        const opc  = (r[idxOpc] ?? "").toString().trim();
+        if (!cost && !opc) continue;
+        out.push([cost, opc].map(escapeCsvValue).join(","));
+      }
+      return out.join("\n");
+    }
+
+    fileInput.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      workbook = null;
+
+      convertBtn.disabled = true;
+      sheetSelect.disabled = true;
+      sheetSelect.innerHTML = `<option value="">(Upload a file first)</option>`;
+      previewEl.textContent = "(no data yet)";
+
+      if (!file) {
+        setStatus("No file selected.");
+        return;
+      }
+
+      if (!file.name.toLowerCase().endsWith(".xlsx")) {
+        setStatus("Please upload a .xlsx file.", "err");
+        return;
+      }
+
+      originalFileName = file.name;
+      setStatus("Reading file…");
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+        if (!workbook.SheetNames?.length) {
+          setStatus("No sheets found in workbook.", "err");
+          return;
+        }
+
+        updateSheetDropdown(workbook);
+
+        const ws = workbook.Sheets[workbook.SheetNames[0]];
+        previewEl.textContent = previewFirstRows(ws);
+
+        convertBtn.disabled = false;
+        setStatus(`Loaded "${file.name}". Choose IN8 or IN9 and convert.`, "ok");
+      } catch (err) {
+        console.error(err);
+        setStatus("Failed to read Excel file. Make sure it is a valid .xlsx.", "err");
+      }
+    });
+
+    sheetSelect.addEventListener("change", () => {
+      if (!workbook) return;
+      const sheetName = sheetSelect.value;
+      const ws = workbook.Sheets[sheetName];
+      previewEl.textContent = previewFirstRows(ws);
+    });
+
+    convertBtn.addEventListener("click", () => {
+      if (!workbook) {
+        setStatus("Upload an Excel file first.", "err");
+        return;
+      }
+
+      const sheetName = sheetSelect.value || workbook.SheetNames[0];
+      const ws = workbook.Sheets[sheetName];
+
+      try {
+        const rows = readRows(ws);
+        if (!rows.length) throw new Error("Sheet has no rows.");
+
+        const headerRow = rows[0].map(h => (h ?? "").toString().trim());
+
+        const fmt = getSelectedFormat();
+
+        // Always need OPC
+        const idxOpc = findHeaderIndex(headerRow, "OPC Code");
+        if (idxOpc === -1) throw new Error(`Header "OPC Code" not found.`);
+
+        const base = safeBaseName(originalFileName);
+        const sheetPart = safeBaseName(sheetName);
+
+        let csv = "";
+        let outName = "";
+
+        if (fmt === "IN8") {
+          const idxLms = findHeaderIndex(headerRow, "LMS BIN");
+          if (idxLms === -1) throw new Error(`Header "LMS BIN" not found.`);
+          csv = buildIN8(rows, idxLms, idxOpc);
+          outName = `IN8_${base}_${sheetPart}.csv`;
+        } else {
+          const idxCost = findHeaderIndex(headerRow, COST_HEADER);
+          if (idxCost === -1) throw new Error(`Header "${COST_HEADER}" not found. (This is your Cost column)`);
+          csv = buildIN9(rows, idxCost, idxOpc);
+          outName = `IN9_${base}_${sheetPart}.csv`;
+        }
+
+        if (!csv || csv.trim().length === 0) throw new Error("CSV output is empty.");
+
+        downloadTextFile(csv, outName);
+        setStatus(`Downloaded ${outName}`, "ok");
+      } catch (e) {
+        console.error(e);
+        setStatus(e.message || "Failed to convert.", "err");
+      }
+    });
+  </script>
+</body>
+</html>
