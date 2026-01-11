@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* === STATE COLORS === */
+    /* ===== STATE COLORS ===== */
     .state-green { background:#065f46 !important; }
     .state-yellow { background:#92400e !important; }
     .state-red { background:#7f1d1d !important; }
@@ -17,13 +17,20 @@
     .state-text-yellow { color:#f59e0b; }
     .state-text-red { color:#ef4444; }
 
-    .pulse {
-      animation: pulse .6s ease-in-out;
+    /* ===== ATTENTION PULSE ===== */
+    .attention-pulse {
+      animation: attentionPulse 1.8s ease-in-out infinite;
     }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-      100% { transform: scale(1); }
+    @keyframes attentionPulse {
+      0%   { box-shadow: 0 0 0 rgba(0,0,0,0); }
+      50%  { box-shadow: 0 0 18px rgba(245,158,11,.45); }
+      100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
+    }
+
+    /* ===== BREAKDOWN PRIORITY ===== */
+    .breakdown-hot {
+      font-weight: 900;
+      background: rgba(239,68,68,.08);
     }
 
     .badge {
