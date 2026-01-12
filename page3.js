@@ -1,99 +1,50 @@
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbzb9LNa7_5dfr7lfFf_MCkHVamM3T5Sw7iByx58WKgWCGvvl6ysZZyIsEBWppuCL3A/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzb9LNa7_5dfr7lfFf_MCkHVamM3T5Sw7iByx58WKgWCGvvl6ysZZyIsEBWppuCL3A/exec";
 
+const activeEl = document.getElementById("activeVal");
+const evalEl   = document.getElementById("evalVal");
+const compEl   = document.getElementById("compVal");
+const updatedEl= document.getElementById("updated");
+const tbody    = document.getElementById("breakdownBody");
+const detail   = document.getElementById("detail");
 
-let dashboardData = null;
+fetch(API_URL)
+  .then(r => r.json())
+  .then(data => {
 
-function animateValue(el, start, end){
-  let cur = start;
-  const step = Math.max(1, Math.floor((end - start) / 30));
-  const timer = setInterval(() => {
-    cur += step;
-    if(cur >= end){
-      cur = end;
-      clearInterval(timer);
-    }
-    el.textContent = cur;
-  }, 16);
-}
+    const active = Number(data.active || 0);
+    const evaluated = Number(data.evaluated || 0);
+    const total = Number(data.totalJobs || (active + evaluated));
 
-async function loadDashboard(){
-  try{
-    const res = await fetch(ENDPOINT);
-    const data = await res.json();
-    dashboardData = data;
+    const completion = total
+      ? ((evaluated / total) * 100).toFixed(2)
+      : "0.00";
 
-    const active = data.active || 0;
-    const evaluated = data.evaluated || 0;
-    const total = active + evaluated;
-    const completion = total ? Math.round((evaluated / total) * 100) : 0;
+    activeEl.textContent = active;
+    evalEl.textContent = evaluated;
+    compEl.textContent = `${completion}%`;
+    updatedEl.textContent = `Last updated: ${new Date(data.updatedAt).toLocaleString()}`;
 
-    animateValue(document.getElementById("active"),0,active);
-    animateValue(document.getElementById("evaluated"),0,evaluated);
-    document.getElementById("completion").textContent = `${completion}%`;
+    tbody.innerHTML = "";
 
-    document.getElementById("updated").textContent =
-      `Last updated: ${new Date(data.updatedAt).toLocaleString()}`;
-
-    document.getElementById("source").textContent =
-      `Source: Tracker Count sheet • Rows scanned: ${data.rows || "?"}`;
-
-    renderBreakdown(data.bySentBack || {});
-  }
-  catch(err){
-    console.error(err);
-    document.getElementById("breakdownBody").innerHTML =
-      `<tr><td colspan="2">Failed to load data</td></tr>`;
-  }
-}
-
-function renderBreakdown(breakdown){
-  const body = document.getElementById("breakdownBody");
-  body.innerHTML = "";
-
-  const entries = Object.entries(breakdown);
-  if(!entries.length){
-    body.innerHTML = `<tr><td colspan="2">No data</td></tr>`;
-    return;
-  }
-
-  entries.sort((a,b)=>b[1]-a[1]).forEach(([bucket,count])=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${bucket}</td><td>${count}</td>`;
-
-    tr.addEventListener("click",()=>{
-      document
-        .querySelectorAll("#breakdownBody tr")
-        .forEach(r=>r.classList.remove("active"));
-
-      tr.classList.add("active");
-      showDetail(bucket,count);
+    Object.entries(data.bySentBack || {}).forEach(([key,count])=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${key}</td><td>${count}</td>`;
+      tr.onclick = () => showDetail(key,count,evaluated);
+      tbody.appendChild(tr);
     });
 
-    body.appendChild(tr);
+  })
+  .catch(err=>{
+    console.error(err);
+    activeEl.textContent = "ERR";
   });
+
+function showDetail(bucket,count,totalEvaluated){
+  const pct = ((count / totalEvaluated) * 100).toFixed(1);
+  detail.style.display = "block";
+  detail.innerHTML = `
+    <h3>${bucket}</h3>
+    <p>Jobs in this bucket: <strong>${count}</strong></p>
+    <p>${pct}% of all evaluated jobs</p>
+  `;
 }
-
-function showDetail(bucket,count){
-  const panel = document.getElementById("detailPanel");
-  panel.style.display = "block";
-
-  const total = (dashboardData.active || 0) + (dashboardData.evaluated || 0);
-  const pct = total ? ((count / total) * 100).toFixed(1) : "0";
-
-  document.getElementById("detailTitle").textContent = bucket;
-  document.getElementById("detailCount").textContent =
-    `Jobs routed here: ${count}`;
-  document.getElementById("detailPercent").textContent =
-    `Impact share: ${pct}% of workload`;
-
-  const last =
-    dashboardData.lastChangeByBucket?.[bucket] ||
-    dashboardData.updatedAt ||
-    null;
-
-  document.getElementById("detailUpdated").textContent =
-    `Last signal received: ${last ? new Date(last).toLocaleString() : "Unknown"}`;
-}
-
-loadDashboard();
-setInterval(loadDashboard, 30000);

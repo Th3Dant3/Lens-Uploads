@@ -1,209 +1,127 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Investigative Hold Tracker</title>
 
 <style>
 :root{
   --bg:#020617;
-  --border:rgba(255,255,255,.08);
+  --panel:#030712;
+  --border:#1f2933;
   --text:#e5e7eb;
-  --muted:#94a3b8;
-
-  --danger:#ef4444;
-  --success:#22c55e;
-  --warn:#f59e0b;
-  --accent:#38bdf8;
-
-  --radius:16px;
-  --shadow:0 20px 40px rgba(0,0,0,.45);
+  --muted:#9ca3af;
+  --red:#ef4444;
+  --green:#22c55e;
+  --amber:#f59e0b;
 }
 
 *{box-sizing:border-box}
 body{
   margin:0;
-  background:radial-gradient(ellipse at top,#020617 0%,#000 100%);
+  background:radial-gradient(circle at top,#020617,#000);
   color:var(--text);
-  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
 }
 
-.wrap{
-  max-width:1280px;
-  margin:36px auto;
-  padding:0 18px 60px;
-}
+.wrap{max-width:1200px;margin:40px auto;padding:0 20px}
 
-/* HEADER */
-.header{
-  padding:22px;
-  border-radius:18px;
+header{
+  background:linear-gradient(180deg,#020617,#000);
   border:1px solid var(--border);
-  background:linear-gradient(135deg,#020617,#020617);
-  box-shadow:var(--shadow);
-}
-.header h1{
-  margin:0;
-  font-size:32px;
-  font-weight:900;
-}
-.header p{
-  margin:6px 0 0;
-  color:var(--muted);
-  font-size:14px;
+  border-radius:18px;
+  padding:24px;
+  margin-bottom:28px;
 }
 
-/* SECTION RAIL */
-.sectionRail{
-  margin:28px 0 10px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.sectionRail::before,
-.sectionRail::after{
-  content:"";
-  height:1px;
-  flex:1;
-  background:linear-gradient(
-    to right,
-    transparent,
-    rgba(56,189,248,.45),
-    transparent
-  );
-}
-.sectionRail span{
-  font-size:12px;
-  letter-spacing:.18em;
-  font-weight:900;
-  color:#7dd3fc;
-}
+h1{margin:0;font-size:28px}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
 
-/* SUMMARY */
 .summary{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:14px;
-}
-@media(max-width:900px){
-  .summary{grid-template-columns:1fr}
+  gap:18px;
+  margin-bottom:26px;
 }
 
-.metric{
-  position:relative;
-  padding:18px;
-  border-radius:var(--radius);
+.card{
+  background:linear-gradient(180deg,#020617,#000);
   border:1px solid var(--border);
-  background:linear-gradient(180deg,#020617,#020617);
-  overflow:hidden;
+  border-radius:16px;
+  padding:20px;
 }
-.metric::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(120deg,transparent,rgba(255,255,255,.06),transparent);
-  transform:translateX(-100%);
-  animation:scan 6s infinite;
+
+.card small{
+  color:#93c5fd;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-weight:700;
+  font-size:11px;
 }
-@keyframes scan{
-  0%{transform:translateX(-100%)}
-  50%{transform:translateX(100%)}
-  100%{transform:translateX(100%)}
-}
-.metric label{
-  font-size:12px;
-  letter-spacing:.14em;
-  font-weight:800;
-  color:var(--muted);
-}
-.metric .value{
-  margin-top:8px;
+
+.card .value{
   font-size:42px;
   font-weight:900;
+  margin-top:8px;
 }
-.metric.danger .value{color:var(--danger)}
-.metric.success .value{color:var(--success)}
-.metric.warn .value{color:var(--warn)}
 
-.metaRow{
+.red{color:var(--red)}
+.green{color:var(--green)}
+.amber{color:var(--amber)}
+
+.meta{
   display:flex;
   justify-content:space-between;
   font-size:12px;
   color:var(--muted);
-  margin:10px 4px 0;
-}
-
-/* TABLE */
-.card{
-  margin-top:22px;
-  padding:18px;
-  border-radius:18px;
-  border:1px solid var(--border);
-  background:linear-gradient(180deg,#020617,#020617);
+  margin-bottom:12px;
 }
 
 table{
   width:100%;
   border-collapse:collapse;
 }
+
 th,td{
-  padding:12px 10px;
+  padding:14px 12px;
   border-bottom:1px solid var(--border);
-  font-size:14px;
 }
+
 th{
   text-align:left;
-  color:#cbd5f5;
-  font-weight:800;
+  color:#93c5fd;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
 }
+
 tbody tr{
   cursor:pointer;
-  transition:background .15s ease;
+  transition:background .15s;
 }
 tbody tr:hover{
-  background:rgba(255,255,255,.04);
-}
-tbody tr.active{
-  background:rgba(56,189,248,.08);
-  box-shadow:inset 0 0 0 1px rgba(56,189,248,.25);
+  background:#020617;
 }
 
-/* DETAIL PANEL */
 .detail{
-  display:none;
-  margin-top:18px;
-  padding:18px;
-  border-radius:18px;
+  margin-top:24px;
+  background:linear-gradient(180deg,#020617,#000);
   border:1px solid var(--border);
-  background:linear-gradient(180deg,#020617,#020617);
-  animation:fadeIn .25s ease-out;
+  border-radius:16px;
+  padding:18px;
+  display:none;
 }
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(6px)}
-  to{opacity:1; transform:none}
-}
-.detail h2{
-  margin:0 0 10px;
-  font-size:22px;
-}
-.detail .line{
-  font-size:14px;
-  color:var(--muted);
-  margin-bottom:6px;
-}
+.detail h3{margin:0 0 6px}
+.detail p{margin:0;color:var(--muted);font-size:13px}
 
-/* BACK */
 .back{
-  margin-top:18px;
+  margin-top:26px;
 }
 .back a{
-  color:#fff;
+  color:#93c5fd;
   text-decoration:none;
-  border:1px solid var(--border);
-  padding:10px 14px;
-  border-radius:12px;
-  display:inline-block;
+  font-weight:700;
 }
 </style>
 </head>
@@ -211,59 +129,48 @@ tbody tr.active{
 <body>
 <div class="wrap">
 
-  <header class="header">
-    <h1>Investigative Hold Tracker</h1>
-    <p>Live LMS Operational View</p>
-  </header>
+<header>
+  <h1>Investigative Hold Tracker</h1>
+  <div class="sub">Live LMS Operational View</div>
+</header>
 
-  <div class="sectionRail"><span>SUMMARY</span></div>
-
-  <section class="summary">
-    <div class="metric danger">
-      <label>ACTIVE HOLDS</label>
-      <div class="value" id="active">—</div>
-    </div>
-    <div class="metric success">
-      <label>EVALUATED</label>
-      <div class="value" id="evaluated">—</div>
-    </div>
-    <div class="metric warn">
-      <label>COMPLETION</label>
-      <div class="value" id="completion">—</div>
-    </div>
-  </section>
-
-  <div class="metaRow">
-    <span id="updated">Last updated: —</span>
-    <span id="source">Source: —</span>
+<section class="summary">
+  <div class="card">
+    <small>Active Holds</small>
+    <div id="activeVal" class="value red">—</div>
   </div>
-
-  <div class="sectionRail"><span>HOLD BREAKDOWN</span></div>
-
-  <section class="card">
-    <table>
-      <thead>
-        <tr>
-          <th>Sent Back To</th>
-          <th>Count</th>
-        </tr>
-      </thead>
-      <tbody id="breakdownBody">
-        <tr><td colspan="2">Loading…</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="detailPanel" class="detail">
-    <h2 id="detailTitle"></h2>
-    <div class="line" id="detailCount"></div>
-    <div class="line" id="detailPercent"></div>
-    <div class="line" id="detailUpdated"></div>
-  </section>
-
-  <div class="back">
-    <a href="index.html">← Back to Dashboard</a>
+  <div class="card">
+    <small>Evaluated</small>
+    <div id="evalVal" class="value green">—</div>
   </div>
+  <div class="card">
+    <small>Completion</small>
+    <div id="compVal" class="value amber">—%</div>
+  </div>
+</section>
+
+<div class="meta">
+  <span id="updated">Last updated: —</span>
+  <span id="source">Source: Tracker Count Sheet</span>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Sent Back To</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody id="breakdownBody"></tbody>
+  </table>
+</div>
+
+<div id="detail" class="detail"></div>
+
+<div class="back">
+  <a href="index.html">← Back to Dashboard</a>
+</div>
 
 </div>
 
