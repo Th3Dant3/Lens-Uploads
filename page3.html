@@ -1,179 +1,86 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Investigative Hold Tracker</title>
-
-<style>
-:root{
-  --bg:#020617;
-  --panel:#030712;
-  --border:#1f2933;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
-  --red:#ef4444;
-  --green:#22c55e;
-  --amber:#f59e0b;
-}
-
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:radial-gradient(circle at top,#020617,#000);
-  color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-}
-
-.wrap{max-width:1200px;margin:40px auto;padding:0 20px}
-
-header{
-  background:linear-gradient(180deg,#020617,#000);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:24px;
-  margin-bottom:28px;
-}
-
-h1{margin:0;font-size:28px}
-.sub{color:var(--muted);font-size:13px;margin-top:6px}
-
-.summary{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-  margin-bottom:26px;
-}
-
-.card{
-  background:linear-gradient(180deg,#020617,#000);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:20px;
-}
-
-.card small{
-  color:#93c5fd;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  font-weight:700;
-  font-size:11px;
-}
-
-.card .value{
-  font-size:42px;
-  font-weight:900;
-  margin-top:8px;
-}
-
-.red{color:var(--red)}
-.green{color:var(--green)}
-.amber{color:var(--amber)}
-
-.meta{
-  display:flex;
-  justify-content:space-between;
-  font-size:12px;
-  color:var(--muted);
-  margin-bottom:12px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,td{
-  padding:14px 12px;
-  border-bottom:1px solid var(--border);
-}
-
-th{
-  text-align:left;
-  color:#93c5fd;
-  font-size:12px;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-}
-
-tbody tr{
-  cursor:pointer;
-  transition:background .15s;
-}
-tbody tr:hover{
-  background:#020617;
-}
-
-.detail{
-  margin-top:24px;
-  background:linear-gradient(180deg,#020617,#000);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:18px;
-  display:none;
-}
-.detail h3{margin:0 0 6px}
-.detail p{margin:0;color:var(--muted);font-size:13px}
-
-.back{
-  margin-top:26px;
-}
-.back a{
-  color:#93c5fd;
-  text-decoration:none;
-  font-weight:700;
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>Investigation Hold Tracker</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-<div class="wrap">
+  <div class="wrap">
 
-<header>
-  <h1>Investigative Hold Tracker</h1>
-  <div class="sub">Live LMS Operational View</div>
-</header>
+    <!-- HEADER -->
+    <div class="header">
+      <div>
+        <h2>Investigation Hold Tracker</h2>
+        <small class="muted">Operational Control Surface</small>
+      </div>
+    </div>
 
-<section class="summary">
-  <div class="card">
-    <small>Active Holds</small>
-    <div id="activeVal" class="value red">—</div>
+    <!-- STATE BAR -->
+    <div id="stateBar" class="state-bar"></div>
+
+    <!-- KPI CARD -->
+    <div class="card">
+      <label>ACTIVE HOLDS</label>
+      <div id="activeHolds" class="counter">0</div>
+
+      <label>EVALUATED</label>
+      <div id="evaluatedCount" class="counter">0</div>
+
+      <label>COVERAGE</label>
+      <div id="coveragePct" class="counter">0%</div>
+
+      <small id="lastUpdated" class="muted"></small>
+    </div>
+
+    <!-- DUAL SUMMARY -->
+    <div class="dual-grid">
+
+      <!-- LEFT: REASONS -->
+      <div class="card">
+        <label>REASONS</label>
+        <table id="reasonTable">
+          <thead>
+            <tr>
+              <th>Reason</th>
+              <th>Count</th>
+              <th>Impact %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="3" class="empty">No reason data available</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RIGHT: SENT BACK TO -->
+      <div class="card">
+        <label>SENT BACK TO</label>
+        <table id="sentBackTable">
+          <thead>
+            <tr>
+              <th>Department</th>
+              <th>Count</th>
+              <th>Impact %</th>
+              <th>Oldest</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="4" class="empty">No investigative data available</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <a class="back" href="index.html">← Back</a>
   </div>
-  <div class="card">
-    <small>Evaluated</small>
-    <div id="evalVal" class="value green">—</div>
-  </div>
-  <div class="card">
-    <small>Completion</small>
-    <div id="compVal" class="value amber">—%</div>
-  </div>
-</section>
 
-<div class="meta">
-  <span id="updated">Last updated: —</span>
-  <span id="source">Source: Tracker Count Sheet</span>
-</div>
-
-<div class="card">
-  <table>
-    <thead>
-      <tr>
-        <th>Sent Back To</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-    <tbody id="breakdownBody"></tbody>
-  </table>
-</div>
-
-<div id="detail" class="detail"></div>
-
-<div class="back">
-  <a href="index.html">← Back to Dashboard</a>
-</div>
-
-</div>
-
-<script src="page3.js"></script>
+  <script src="page3.js"></script>
 </body>
 </html>

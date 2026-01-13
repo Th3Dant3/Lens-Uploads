@@ -114,3 +114,28 @@ tbody tr:hover{
   text-decoration:none;
   font-weight:700;
 }
+/* ============================
+   PAGE 3 EXTENSIONS
+   ============================ */
+
+.dual-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+@media (max-width:900px){
+  .dual-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+.age-ok{ color:var(--green); }
+.age-warn{ color:var(--yellow); }
+.age-danger{ color:var(--red); font-weight:700; }
+
+.empty{
+  text-align:center;
+  color:var(--muted);
+  font-style:italic;
+}

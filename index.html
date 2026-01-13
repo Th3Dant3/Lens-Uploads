@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LMS Tool — Dashboard</title>
+<title>LMS Operational Control Center</title>
 
 <style>
 :root{
@@ -78,6 +78,13 @@ body{
   background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
   transition:transform .15s ease, box-shadow .15s ease;
 }
+.card.attention{
+  border-color:var(--err);
+  box-shadow:0 0 0 1px rgba(239,68,68,.4);
+}
+.card.warning{
+  border-color:var(--warn);
+}
 .card:hover{
   transform:translateY(-2px);
   box-shadow:0 20px 50px rgba(0,0,0,.35);
@@ -104,10 +111,14 @@ body{
   margin-bottom:14px;
 }
 .dot{
-  width:8px;height:8px;border-radius:50%;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#475569;
 }
-.ok{background:var(--ok)}
-.warn{background:var(--warn)}
+.dot.ok{ background:var(--ok); }
+.dot.warn{ background:var(--warn); }
+.dot.err{ background:var(--err); }
 
 /* ACTION */
 .action{
@@ -145,12 +156,12 @@ a.btn.primary{
 <div class="wrap">
 
 <header class="header">
-  <h1>LMS Operational Tools</h1>
-  <p>Internal workflow utilities</p>
+  <h1>LMS Operational Control Center</h1>
+  <p>Zenni Optical Manufacturing Lab</p>
 
   <div class="meta">
     <span>Environment: Zenni</span>
-    <span id="clock">—</span>
+    <span id="last-refresh">Last refresh: —</span>
   </div>
 </header>
 
@@ -159,11 +170,11 @@ a.btn.primary{
   <!-- Lens Uploads -->
   <div class="card">
     <h3>Lens Uploads</h3>
-    <p>Convert Excel files to IN8 / IN9 CSV format for LMS ingestion.</p>
+    <p>Convert Excel files to IN8 / IN9 CSV format.</p>
 
     <div class="status">
       <span class="dot ok"></span>
-      Ready · Drag & Drop Enabled
+      <span class="status-text">Live</span>
     </div>
 
     <div class="action">
@@ -173,13 +184,13 @@ a.btn.primary{
   </div>
 
   <!-- Investigative Holds -->
-  <div class="card">
+  <div class="card" id="investigation-card">
     <h3>Investigative Hold Tracker</h3>
-    <p>Live dashboard for tracking investigative holds by department.</p>
+    <p>Operational visibility into investigative workflow.</p>
 
-    <div class="status">
-      <span class="dot ok"></span>
-      Live Data Connected
+    <div class="status" id="investigation-status">
+      <span class="dot"></span>
+      <span class="status-text">Checking status…</span>
     </div>
 
     <div class="action">
@@ -188,35 +199,19 @@ a.btn.primary{
     </div>
   </div>
 
-  <!-- TRUE CURVE / POWER ISSUES -->
-  <div class="card">
+  <!-- True Curve -->
+  <div class="card" id="power-card">
     <h3>True Curve / Power Issues</h3>
-    <p>RX-level tracking for power adjustments, test lenses, and escalations.</p>
+    <p>RX-level power adjustments and tracking.</p>
 
-    <div class="status">
-      <span class="dot ok"></span>
-      Live · 2025 Tracker
+    <div class="status" id="power-status">
+      <span class="dot"></span>
+      <span class="status-text">Checking status…</span>
     </div>
 
     <div class="action">
       <span>RX Power</span>
       <a class="btn primary" href="true-curve.html">Open Tracker</a>
-    </div>
-  </div>
-
-  <!-- Future Tool -->
-  <div class="card">
-    <h3>Frame Uploads</h3>
-    <p>Coming Soon.</p>
-
-    <div class="status">
-      <span class="dot warn"></span>
-      In Development
-    </div>
-
-    <div class="action">
-      <span>Coming Soon</span>
-      <a class="btn" href="#">Disabled</a>
     </div>
   </div>
 
@@ -228,14 +223,6 @@ a.btn.primary{
 
 </div>
 
-<script>
-function updateClock(){
-  document.getElementById("clock").textContent =
-    new Date().toLocaleString();
-}
-updateClock();
-setInterval(updateClock,1000);
-</script>
-
+<script src="index.js"></script>
 </body>
 </html>
