@@ -349,6 +349,55 @@ tbody tr:hover {
   text-decoration: underline;
 }
 
+/* ===============================
+   MOBILE VISIBILITY FIX
+   =============================== */
+@media (max-width: 768px) {
+
+  /* Force metric cards to show */
+  .metrics {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .metric {
+    padding: 12px;
+  }
+
+  .metric strong {
+    font-size: 22px;
+  }
+
+  /* Stack controls cleanly */
+  .year-selector,
+  .tabs,
+  .group-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .year-btn,
+  .tab {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  /* Prevent Safari from clipping */
+  body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .container {
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+}
+
 /* =====================================================
    FOOTER
    ===================================================== */
