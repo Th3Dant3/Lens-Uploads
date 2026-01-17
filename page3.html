@@ -3,63 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <title>Investigation Hold Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Shared LMS / Zenni styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+
+  <!-- REQUIRED for animated background -->
+  <div class="animated-bg"></div>
+
   <div class="wrap">
 
     <!-- HEADER -->
     <div class="header">
       <div>
         <h2>Investigation Hold Tracker</h2>
-        <small class="muted">Operational Control Surface</small>
+        <div class="muted">Operational Control Surface</div>
       </div>
     </div>
 
     <!-- STATE BAR -->
     <div id="stateBar" class="state-bar"></div>
 
-    <!-- KPI CARD -->
-    <div class="card">
-      <label>ACTIVE HOLDS</label>
-      <div id="activeHolds" class="counter">0</div>
+    <!-- KPI ROW -->
+    <div class="kpis">
+      <div class="kpi">
+        <label>ACTIVE HOLDS</label>
+        <div id="activeHolds" class="value">0</div>
+      </div>
 
-      <label>EVALUATED</label>
-      <div id="evaluatedCount" class="counter">0</div>
+      <div class="kpi">
+        <label>EVALUATED</label>
+        <div id="evaluatedCount" class="value">0</div>
+      </div>
 
-      <label>COVERAGE</label>
-      <div id="coveragePct" class="counter">0%</div>
+      <div class="kpi">
+        <label>COVERAGE</label>
+        <div id="coveragePct" class="value">0%</div>
+      </div>
 
-      <small id="lastUpdated" class="muted"></small>
+      <div class="kpi">
+        <label>LAST UPDATED</label>
+        <small id="lastUpdated">—</small>
+      </div>
     </div>
 
-    <!-- DUAL SUMMARY -->
+    <!-- SIDE BY SIDE PANELS -->
     <div class="dual-grid">
 
       <!-- LEFT: REASONS -->
       <div class="card">
         <label>REASONS</label>
-        <table id="reasonTable">
-          <thead>
-            <tr>
-              <th>Reason</th>
-              <th>Count</th>
-              <th>Impact %</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colspan="3" class="empty">No reason data available</td>
-            </tr>
-          </tbody>
-        </table>
+
+        <!-- JS WILL POPULATE THIS -->
+        <div id="reasonList">
+          <div class="empty">Loading…</div>
+        </div>
       </div>
 
       <!-- RIGHT: SENT BACK TO -->
       <div class="card">
         <label>SENT BACK TO</label>
-        <table id="sentBackTable">
+
+        <table>
           <thead>
             <tr>
               <th>Department</th>
@@ -68,9 +76,9 @@
               <th>Oldest</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="sentBackTable">
             <tr>
-              <td colspan="4" class="empty">No investigative data available</td>
+              <td colspan="4" class="empty">Loading…</td>
             </tr>
           </tbody>
         </table>
@@ -78,9 +86,12 @@
 
     </div>
 
+    <!-- BACK -->
     <a class="back" href="index.html">← Back</a>
+
   </div>
 
+  <!-- DATA LOGIC -->
   <script src="page3.js"></script>
 </body>
 </html>
