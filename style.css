@@ -1,141 +1,361 @@
-:root{
-  --bg:#020617;
-  --panel:#0b1220;
-  --border:#1f2937;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
+/* =====================================================
+   ZENNI LMS – SHARED DASHBOARD THEME
+   Works for Index + Page 3 + True Curve
+   ===================================================== */
 
-  --green:#22c55e;
-  --yellow:#f59e0b;
-  --red:#ef4444;
+:root {
+  --bg-dark: #020617;
+  --bg-panel: #0b1220;
+  --border: #1f2937;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --blue: #38bdf8;
+  --blue-soft: #0ea5e9;
+  --green: #22c55e;
 }
 
-*{ box-sizing:border-box; }
+/* =====================================================
+   RESET
+   ===================================================== */
 
-body{
-  margin:0;
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
   font-family: ui-sans-serif, system-ui;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  color:var(--text);
+  color: var(--text);
+  background: var(--bg-dark);
+  overflow-x: hidden;
 }
 
-.wrap{
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
+/* =====================================================
+   ANIMATED BACKGROUND (REQUIRED ELEMENT)
+   ===================================================== */
+
+.animated-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 25%, #0f2a44, transparent 42%),
+    radial-gradient(circle at 82% 70%, #0a1f3d, transparent 48%),
+    linear-gradient(180deg, #020617, #020617);
+  animation: drift 22s ease-in-out infinite alternate;
 }
 
-/* HEADER */
-.header{
-  background:#020617;
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-/* STATE BAR */
-.state-bar{
-  height:6px;
-  border-radius:3px;
-  margin:10px 0 18px;
-  background:var(--border);
-  transition:background .4s ease;
-}
-
-/* PANELS */
-.card{
-  background:linear-gradient(180deg, var(--panel), #020617);
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:16px;
-  margin-bottom:18px;
-}
-
-/* LABELS */
-label{
-  font-size:11px;
-  letter-spacing:.12em;
-  color:var(--muted);
-  margin-bottom:6px;
-  display:block;
-}
-
-/* COUNTERS */
-.counter{
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size:52px;
-  font-weight:800;
-  letter-spacing:.05em;
-}
-
-/* MOTION */
-.flash{
-  animation:flash .25s ease-in-out;
-}
-@keyframes flash{
-  0%{opacity:.3}
-  100%{opacity:1}
-}
-
-/* TABLE */
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-th{
-  text-align:left;
-  font-size:11px;
-  color:var(--muted);
-  padding:8px;
-  background:#020617;
-}
-td{
-  padding:10px 8px;
-  border-bottom:1px solid var(--border);
-}
-tbody tr:hover{
-  background:rgba(255,255,255,.04);
-}
-
-/* PRIORITY */
-.hot{
-  background:linear-gradient(90deg, rgba(239,68,68,.25), transparent);
-  font-weight:700;
-}
-
-/* NAV */
-.back{
-  display:inline-block;
-  margin-top:10px;
-  color:var(--text);
-  text-decoration:none;
-  font-weight:700;
-}
-/* ============================
-   PAGE 3 EXTENSIONS
-   ============================ */
-
-.dual-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
-
-@media (max-width:900px){
-  .dual-grid{
-    grid-template-columns:1fr;
+@keyframes drift {
+  from {
+    background-position: 0% 0%, 100% 100%, center;
+  }
+  to {
+    background-position: 22% 28%, 78% 72%, center;
   }
 }
 
-.age-ok{ color:var(--green); }
-.age-warn{ color:var(--yellow); }
-.age-danger{ color:var(--red); font-weight:700; }
+/* =====================================================
+   GLOBAL LAYOUT
+   ===================================================== */
 
-.empty{
-  text-align:center;
-  color:var(--muted);
-  font-style:italic;
+.wrap {
+  max-width: 1400px;
+  margin: auto;
+  padding: 28px;
+}
+
+@media (max-width: 768px) {
+  .wrap {
+    padding: 20px;
+  }
+}
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-dark));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px 26px;
+  margin-bottom: 28px;
+}
+
+.header h1,
+.header h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.env {
+  font-size: 12px;
+  color: #7dd3fc;
+  margin-top: 4px;
+}
+
+.refresh {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* =====================================================
+   STATE BAR (PAGE 3)
+   ===================================================== */
+
+.state-bar {
+  height: 6px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  background: linear-gradient(90deg, var(--blue), var(--blue-soft));
+  box-shadow: 0 0 14px rgba(56,189,248,.55);
+}
+
+/* =====================================================
+   CARDS (GLOBAL)
+   ===================================================== */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+.card {
+  background: linear-gradient(180deg, var(--bg-panel), #020617);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.35);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px rgba(0,0,0,.55);
+}
+
+.card h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+/* =====================================================
+   STATUS DOT (INDEX)
+   ===================================================== */
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+.status::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(34,197,94,.8);
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+.btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(180deg, var(--blue), var(--blue-soft));
+  color: #020617;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(56,189,248,.45);
+}
+
+/* =====================================================
+   TAGS
+   ===================================================== */
+
+.tag {
+  font-size: 12px;
+  color: #93c5fd;
+}
+
+/* =====================================================
+   KPI GRID (PAGE 3)
+   ===================================================== */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.kpi {
+  background: linear-gradient(180deg, var(--bg-panel), #020617);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.kpi label {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .08em;
+}
+
+.kpi .value {
+  font-size: 34px;
+  font-weight: 800;
+  margin-top: 6px;
+}
+
+/* =====================================================
+   SIDE-BY-SIDE PANELS (PAGE 3)
+   ===================================================== */
+
+.dual-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+@media (max-width: 900px) {
+  .dual-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================
+   REASON BARS (PAGE 3)
+   ===================================================== */
+
+.reason-row {
+  margin-bottom: 16px;
+}
+
+.reason-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.reason-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.reason-bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--blue), var(--blue-soft));
+  box-shadow: 0 0 10px rgba(56,189,248,.6);
+  animation: grow .7s ease-out forwards;
+}
+
+@keyframes grow {
+  from { width: 0; }
+}
+
+/* =====================================================
+   TABLES (PAGE 3 / TRUE CURVE)
+   ===================================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  font-size: 12px;
+  color: #93c5fd;
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+tbody tr:hover {
+  background: rgba(255,255,255,.04);
+}
+
+/* =====================================================
+   EMPTY STATE
+   ===================================================== */
+
+.empty {
+  text-align: center;
+  padding: 18px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* =====================================================
+   BACK LINK
+   ===================================================== */
+
+.back {
+  display: inline-block;
+  margin-top: 26px;
+  color: #93c5fd;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 36px;
 }
