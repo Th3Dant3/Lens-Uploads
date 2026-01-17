@@ -5,79 +5,70 @@
   <title>LMS Operational Control Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Shared LMS / Zenni styles -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- PAGE-SPECIFIC CSS -->
+  <link rel="stylesheet" href="style-index.css" />
 </head>
 
 <body>
 
-  <!-- REQUIRED: animated background -->
+  <!-- ANIMATED BACKGROUND -->
   <div class="animated-bg"></div>
 
   <div class="wrap">
 
     <!-- HEADER -->
-    <div class="header">
+    <header class="header">
       <div>
         <h1>LMS Operational Control Center</h1>
         <div class="sub">Zenni Optical Manufacturing Lab</div>
         <div class="env">Environment: Zenni</div>
       </div>
+      <div class="refresh" id="lastRefresh">Last refresh: —</div>
+    </header>
 
-      <div class="refresh">
-        <span id="last-refresh">Last refresh: —</span>
-      </div>
-    </div>
-
-    <!-- DASHBOARD CARDS -->
-    <div class="cards">
+    <!-- MAIN CARDS -->
+    <section class="cards">
 
       <!-- LENS UPLOADS -->
       <div class="card">
         <h2>Lens Uploads</h2>
         <p>Convert Excel files to IN8 / IN9 CSV format.</p>
 
-        <div class="status status-live">
-          <span>Live</span>
-        </div>
+        <div class="status">Live</div>
 
         <div class="card-footer">
           <span class="tag">IN8 / IN9</span>
-          <button id="btn-lens" class="btn">Open Tool</button>
+          <a class="btn" href="in8-in9.html">Open Tool</a>
         </div>
       </div>
 
-      <!-- INVESTIGATION -->
+      <!-- INVESTIGATIVE HOLD TRACKER -->
       <div class="card">
         <h2>Investigative Hold Tracker</h2>
         <p>Operational visibility into investigative workflow.</p>
 
-        <div class="status status-live">
-          <span>Updated just now</span>
-        </div>
+        <div class="status">Updated just now</div>
 
         <div class="card-footer">
           <span class="tag">Operational View</span>
-          <button id="btn-investigations" class="btn">View Dashboard</button>
+          <a class="btn" href="page3.html">View Dashboard</a>
         </div>
       </div>
 
-      <!-- TRUE CURVE -->
+      <!-- TRUE CURVE / POWER ISSUES -->
       <div class="card">
         <h2>True Curve / Power Issues</h2>
         <p>RX-level power adjustments and tracking.</p>
 
-        <div class="status status-live">
-          <span>Updated just now</span>
-        </div>
+        <div class="status">Updated just now</div>
 
         <div class="card-footer">
           <span class="tag">RX Power</span>
-          <button id="btn-power" class="btn">Open Tracker</button>
+          <a class="btn" href="true-curve.html">Open Tracker</a>
         </div>
       </div>
 
-    </div>
+    </section>
 
     <!-- FOOTER -->
     <footer>
@@ -86,7 +77,7 @@
 
   </div>
 
-  <!-- Dashboard logic -->
+  <!-- PAGE SCRIPT -->
   <script src="index.js"></script>
 </body>
 </html>
