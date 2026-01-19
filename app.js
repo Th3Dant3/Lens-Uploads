@@ -9,4 +9,3 @@ function flash(el){
   if(!el) return;
   el.classList.add("flash");
   setTimeout(()=>el.classList.remove("flash"),250);
-}

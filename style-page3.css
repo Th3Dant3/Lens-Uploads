@@ -8,6 +8,7 @@
 }
 
 *{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:system-ui;
@@ -15,6 +16,7 @@ body{
   background:var(--bg);
 }
 
+/* animated background */
 .animated-bg{
   position:fixed;
   inset:0;
@@ -30,7 +32,11 @@ body{
   to{background-position:20% 30%,80% 70%}
 }
 
-.wrap{max-width:1200px;margin:auto;padding:22px}
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:22px;
+}
 
 .header{
   background:linear-gradient(180deg,var(--panel),var(--bg));
@@ -42,60 +48,28 @@ body{
 
 .sub{color:var(--muted)}
 
-.kpis{
+.cards{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
   gap:14px;
   margin-bottom:22px;
 }
 
-.kpi{
-  background:linear-gradient(180deg,var(--panel),var(--bg));
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px;
-}
-
-.kpi label{
-  font-size:11px;
-  color:var(--muted);
-  text-transform:uppercase;
-}
-
-.kpi span{font-size:26px;font-weight:700}
-
 .card{
   background:linear-gradient(180deg,var(--panel),var(--bg));
   border:1px solid var(--border);
   border-radius:18px;
   padding:18px;
-  margin-bottom:18px;
 }
 
-.bars{display:flex;flex-direction:column;gap:12px}
-
-.bar{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
+.metric{
+  font-size:26px;
+  font-weight:700;
 }
 
-.bar-head{
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-}
-
-.track{
-  height:8px;
-  background:#020617;
-  border-radius:999px;
-  overflow:hidden;
-}
-
-.fill{
-  height:100%;
-  background:linear-gradient(90deg,#38bdf8,#0ea5e9);
+.small{
+  font-size:12px;
+  color:var(--muted);
 }
 
 table{
@@ -109,14 +83,64 @@ th,td{
   border-bottom:1px solid var(--border);
 }
 
-th{color:#93c5fd;text-align:left}
+th{
+  color:#93c5fd;
+  text-align:left;
+}
+
+/* impact rows */
+.impact-row{
+  margin-bottom:12px;
+}
+
+.impact-head{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+}
+
+.impact-bar{
+  height:8px;
+  background:#020617;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.impact-fill{
+  height:100%;
+  width:var(--w);
+  background:linear-gradient(90deg,#38bdf8,#0ea5e9);
+}
+
+.impact-meta{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+}
 
 .back{
   display:inline-block;
-  margin-top:12px;
+  margin-top:14px;
   color:#93c5fd;
   text-decoration:none;
+  font-weight:600;
 }
 
-.fade-in{animation:fade .4s ease-out}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+/* ===============================
+   AUTO-REFRESH FLASH ANIMATION
+   =============================== */
+
+.refresh-flash{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.08);
+  pointer-events:none;
+  z-index:999;
+  animation:refreshFlash .35s ease-out;
+}
+
+@keyframes refreshFlash{
+  from{opacity:0}
+  30%{opacity:1}
+  to{opacity:0}
+}
