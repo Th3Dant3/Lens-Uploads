@@ -1,44 +1,33 @@
-/* =====================================================
-   LMS OPERATIONAL CONTROL CENTER — INDEX.JS
-   ===================================================== */
+const API_URL =
+  "https://script.google.com/a/macros/zennioptical.com/s/AKfycbzbQBjzoEEBpvukFkR-XMw8kG_gzCIuxZrTLodZZ_EnwqYAujOBqSzYslx-x9XTw7_UUA/exec";
 
-const REFRESH_INTERVAL = 60000; // 2 minutes
+document.addEventListener("DOMContentLoaded", loadDashboard);
 
-document.addEventListener("DOMContentLoaded", () => {
-  wireNavigation();
-  updateLastRefresh();
-  setInterval(updateLastRefresh, REFRESH_INTERVAL);
-});
+function loadDashboard() {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("active").textContent =
+        data.active ?? "0";
 
-/* =====================================================
-   NAVIGATION BUTTONS
-   ===================================================== */
+      document.getElementById("completed").textContent =
+        data.completed ?? "0";
 
-function wireNavigation() {
-  const nav = {
-    "btn-lens": "in8-in9.html",
-    "btn-investigations": "page3.html",
-    "btn-power": "true-curve.html"
-  };
-
-  Object.entries(nav).forEach(([id, target]) => {
-    const btn = document.getElementById(id);
-    if (!btn) return;
-
-    btn.addEventListener("click", () => {
-      window.location.href = target;
+      document.getElementById("coverage").textContent =
+        Math.round((data.coverage || 0) * 100) + "%";
+    })
+    .catch(err => {
+      console.error("Dashboard load failed", err);
+      showError();
     });
-  });
 }
 
-/* =====================================================
-   LAST REFRESH DISPLAY
-   ===================================================== */
+function showError() {
+  document.getElementById("active").textContent = "ERR";
+  document.getElementById("completed").textContent = "ERR";
+  document.getElementById("coverage").textContent = "ERR";
+}
 
-function updateLastRefresh() {
-  const el = document.getElementById("last-refresh");
-  if (!el) return;
-
-  el.textContent =
-    "Last refresh: " + new Date().toLocaleTimeString();
+function openPage(page) {
+  window.location.href = page;
 }

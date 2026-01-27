@@ -3,81 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <title>LMS Operational Control Center</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- PAGE-SPECIFIC CSS -->
   <link rel="stylesheet" href="style-index.css" />
 </head>
-
 <body>
 
-  <!-- ANIMATED BACKGROUND -->
-  <div class="animated-bg"></div>
+<div class="container">
+  <header class="header">
+    <h1>LMS Operational Control Center</h1>
+    <p>Zenni Optical Manufacturing Lab<br>Environment: Zenni</p>
+  </header>
 
-  <div class="wrap">
+  <section class="cards">
 
-    <!-- HEADER -->
-    <header class="header">
-      <div>
-        <h1>LMS Operational Control Center</h1>
-        <div class="sub">Zenni Optical Manufacturing Lab</div>
-        <div class="env">Environment: Zenni</div>
+    <!-- Investigative Hold Tracker -->
+    <div class="card highlight">
+      <h2>Investigative Hold Tracker</h2>
+      <p>Active <span id="active">—</span></p>
+      <p>Completed <span id="completed">—</span></p>
+      <p>Coverage <span id="coverage">—</span></p>
+
+      <button onclick="openPage('page3.html')">
+        View Inventigation Hold
+      </button>
+    </div>
+
+    <!-- True Curve -->
+    <div class="card">
+      <h2>True Curve / Power Issues</h2>      
+      <div class="btn-row">       
+      <button onclick="openPage('true-curve.html')">
+		 View True Curve & Power Issues </button>
       </div>
-      <div class="refresh" id="lastRefresh">Last refresh: —</div>
-    </header>
+    </div>
 
-    <!-- MAIN CARDS -->
-    <section class="cards">
+    <!-- Lens Uploads -->
+    <div class="card">
+      <h2>Lens Uploads</h2>
+      <p>In8 & In9 Format</p>
+      <h3 id="lensCount">0</h3>
+      <button onclick="openPage('in8-in9.html')">Open Tool</button>
+    </div>
 
-      <!-- LENS UPLOADS -->
-      <div class="card">
-        <h2>Lens Uploads</h2>
-        <p>Convert Excel files to IN8 / IN9 CSV format.</p>
+  </section>
 
-        <div class="status">Live</div>
+  <footer>
+    LMS Tooling · Internal Use Only
+  </footer>
+</div>
 
-        <div class="card-footer">
-          <span class="tag">IN8 / IN9</span>
-          <a class="btn" href="in8-in9.html">Open Tool</a>
-        </div>
-      </div>
-
-      <!-- INVESTIGATIVE HOLD TRACKER -->
-      <div class="card">
-        <h2>Investigative Hold Tracker</h2>
-        <p>Operational visibility into investigative workflow.</p>
-
-        <div class="status">Updated just now</div>
-
-        <div class="card-footer">
-          <span class="tag">Operational View</span>
-          <a class="btn" href="page3.html">View Dashboard</a>
-        </div>
-      </div>
-
-      <!-- TRUE CURVE / POWER ISSUES -->
-      <div class="card">
-        <h2>True Curve / Power Issues</h2>
-        <p>RX-level power adjustments and tracking.</p>
-
-        <div class="status">Updated just now</div>
-
-        <div class="card-footer">
-          <span class="tag">RX Power</span>
-          <a class="btn" href="true-curve.html">Open Tracker</a>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- FOOTER -->
-    <footer>
-      LMS Tooling · Internal Use Only
-    </footer>
-
-  </div>
-
-  <!-- PAGE SCRIPT -->
-  <script src="index.js"></script>
+<script src="index.js"></script>
 </body>
 </html>
