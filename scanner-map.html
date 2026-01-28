@@ -4,24 +4,27 @@
   <meta charset="UTF-8" />
   <title>Scanner Map</title>
 
-  <!-- MUST BE EXACT -->
-  <link rel="stylesheet" href="./scanner-map.css" />
+  <!-- CSS -->
+  <link rel="stylesheet" href="scanner-map.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
 
-<h1 class="page-title">Scanner Map</h1>
+  <!-- PAGE TITLE -->
+  <div class="page-title">Scanner Map</div>
 
-<section id="scannerMapView">
+  <!-- BACK LINK -->
+  <a class="back-link" href="index.html">← Back</a>
+
+  <!-- APP ROOT (THIS WAS MISSING) -->
   <div id="app"></div>
-</section>
 
-<section id="sentBackView" style="display:none">
-  <div id="sentBackBubbles"></div>
-</section>
+  <!-- DATA -->
+  <script src="scanner-data.js"></script>
 
-<a class="back" href="index.html">← Back</a>
+  <!-- LOGIC -->
+  <script src="scanner-map.js"></script>
 
-<!-- MUST BE AT BOTTOM -->
-<script src="./scanner-map.js"></script>
 </body>
 </html>
