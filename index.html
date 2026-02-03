@@ -7,12 +7,19 @@
 </head>
 <body>
 
+<script>
+  if (sessionStorage.getItem("lms_logged_in") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+
 <div class="container">
 
   <!-- Header -->
   <header class="header">
     <h1>Lab Management System</h1>
     <p>Zenni Optical USA Manufacturing Lab<br>Environment: Zenni USA</p>
+	<button class="logout-btn" onclick="logout()">Logout</button>
   </header>
 
   <!-- Executive Status Strip -->

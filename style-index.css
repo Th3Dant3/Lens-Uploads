@@ -22,6 +22,8 @@ body {
   border-radius: 20px;
   padding: 26px 30px;
   margin-bottom: 24px;
+  position: relative;
+  
 }
 
 .header h1 {
@@ -153,9 +155,55 @@ footer {
   font-size: 13px;
 }
 
+.logout-btn {
+  position: absolute;
+  top: 24px;
+  right: 30px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+
 /* Responsive */
 @media (max-width: 720px) {
   .cards.two-col {
     grid-template-columns: 1fr;
   }
+}
+/* ===============================
+   Scanner Attention Detail (NEW)
+   =============================== */
+
+.scanner-detail {
+  margin: 12px 0 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  font-size: 13px;
+  color: #fde68a;
+}
+
+.scanner-detail strong {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.scanner-detail ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.scanner-detail li {
+  margin: 2px 0;
 }

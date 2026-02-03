@@ -2,21 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>LMS Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LMS Dashboard Login</title>
   <link rel="stylesheet" href="style-index.css" />
 </head>
-<body>
 
+<body>
   <div class="login-container">
     <h2>LMS Dashboard Login</h2>
 
-    <input type="text" id="username" placeholder="Username (e.g. BLOPEZ)" />
-    <input type="password" id="password" placeholder="Password" />
+    <input
+      id="username"
+      type="text"
+      placeholder="Username"
+      autocomplete="username"
+    />
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+    />
 
     <button onclick="login()">Login</button>
 
-    <p id="login-msg"></p>
+    <!-- IMPORTANT: ID MUST BE "message" -->
+    <p id="message" class="login-message"></p>
   </div>
 
   <script src="login.js"></script>

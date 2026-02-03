@@ -1,73 +1,120 @@
-const API_URL =
+/**************************************************
+ * CONFIG
+ **************************************************/
+const AUTH_API =
   "https://script.google.com/macros/s/AKfycbzESjnpNzOyDP76Gm6atwBgh5txV5N2AI225kxz5Q8w7jXgVTIqZrDtIIpQigEE6250/exec";
 
-async function login() {
-  const username = document.getElementById("username").value.trim().toUpperCase();
-  const password = document.getElementById("password").value;
-  const msg = document.getElementById("login-msg");
+/**************************************************
+ * LOGIN HANDLER
+ **************************************************/
+function login() {
+  const usernameEl = document.getElementById("username");
+  const passwordEl = document.getElementById("password");
+  const messageEl = document.getElementById("message");
+
+  const username = usernameEl.value.trim().toUpperCase();
+  const password = passwordEl.value.trim();
+
+  messageEl.textContent = "";
+  messageEl.style.color = "red";
 
   if (!username || !password) {
-    msg.textContent = "Enter username and password";
+    messageEl.textContent = "Enter username and password";
     return;
   }
 
-  msg.textContent = "Authenticating...";
-
   const url =
-    `${API_URL}?action=login` +
+    `${AUTH_API}?action=login` +
     `&username=${encodeURIComponent(username)}` +
     `&password=${encodeURIComponent(password)}`;
 
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (data.status === "SET_PASSWORD_REQUIRED") {
-      await setPassword(username, password);
-      return;
-    }
-
-    if (data.status === "SUCCESS") {
-      localStorage.setItem(
-        "lmsUser",
-        JSON.stringify({
-          username: data.username,
-          role: data.role,
-          subRole: data.subRole,
-          loginTime: Date.now()
-        })
-      );
-
-      window.location.href = "index.html";
-      return;
-    }
-
-    msg.textContent = data.error || "Login failed";
-  } catch (err) {
-    msg.textContent = "Connection error";
-  }
+  fetch(url)
+    .then(res => res.json())
+    .then(data => handleLoginResponse(data, password))
+    .catch(err => {
+      console.error(err);
+      messageEl.textContent = "Connection error";
+    });
 }
 
-async function setPassword(username, password) {
-  const msg = document.getElementById("login-msg");
-  msg.textContent = "Setting password...";
+/**************************************************
+ * HANDLE LOGIN RESPONSE
+ **************************************************/
+function handleLoginResponse(data, originalPassword) {
+  const messageEl = document.getElementById("message");
+
+  // Reset styles
+  messageEl.style.color = "#f87171";
+
+  // Backend error (wrong user / wrong password)
+  if (data.status === "ERROR") {
+    messageEl.textContent =
+      data.message || "Invalid username or password";
+    return;
+  }
+
+  // First-time login
+  if (data.status === "SET_PASSWORD_REQUIRED") {
+    messageEl.style.color = "#fbbf24";
+    messageEl.textContent = "First login detected. Setting password...";
+    setPassword(data.username, originalPassword);
+    return;
+  }
+
+  // Successful login
+  if (data.status === "SUCCESS") {
+    messageEl.style.color = "#6ee7b7";
+    messageEl.textContent = "Login successful. Redirecting…";
+
+    sessionStorage.setItem("lms_logged_in", "true");
+    sessionStorage.setItem("lms_user", data.username);
+    sessionStorage.setItem("lms_role", data.role);
+    sessionStorage.setItem("lms_subRole", data.subRole);
+
+    setTimeout(() => {
+      window.location.replace("index.html");
+    }, 600); // small delay so user sees success
+    return;
+  }
+
+  // Fallback
+  messageEl.textContent = "Unexpected login response";
+}
+
+/**************************************************
+ * SET PASSWORD (FIRST LOGIN)
+ **************************************************/
+function setPassword(username, password) {
+  const messageEl = document.getElementById("message");
 
   const url =
-    `${API_URL}?action=setPassword` +
+    `${AUTH_API}?action=setPassword` +
     `&username=${encodeURIComponent(username)}` +
     `&password=${encodeURIComponent(password)}`;
 
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (data.status !== "PASSWORD_SET") {
+        messageEl.textContent = "Failed to set password";
+        return;
+      }
 
-    if (data.status === "PASSWORD_SET") {
-      msg.textContent = "Password set. Logging in...";
-      setTimeout(login, 500);
-    } else {
-      msg.textContent = data.error || "Password setup failed";
-    }
-  } catch {
-    msg.textContent = "Password setup error";
-  }
+      sessionStorage.setItem("lms_logged_in", "true"); // ✅ FIX
+      sessionStorage.setItem("lms_user", username);
+      window.location.replace("index.html");
+    })
+    .catch(err => {
+      console.error(err);
+      messageEl.textContent = "Password setup failed";
+    });
 }
+
+/**************************************************
+ * ENTER KEY SUPPORT
+ **************************************************/
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    login();
+  }
+});

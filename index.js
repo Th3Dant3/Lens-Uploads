@@ -6,7 +6,7 @@ const API_URL =
   "https://script.google.com/a/macros/zennioptical.com/s/AKfycbzbQBjzoEEBpvukFkR-XMw8kG_gzCIuxZrTLodZZ_EnwqYAujOBqSzYslx-x9XTw7_UUA/exec";
 
 /* ===============================
-   🔹 NEW: SCANNER STORAGE
+   🔹 SCANNER STORAGE
    =============================== */
 
 const SCANNER_STORAGE_KEY = "lms_scanner_attention";
@@ -21,30 +21,53 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ===============================
-   DASHBOARD (UNCHANGED CORE)
+   DASHBOARD LOAD
    =============================== */
 
 function loadDashboard() {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
+
       const active = Number(data.active ?? 0);
       const completed = Number(data.completed ?? 0);
-      const coveragePct = Math.floor((data.coverage || 0) * 100);
 
-      // Executive strip
+      /* -------------------------------
+         SAFE COVERAGE HANDLING
+         ------------------------------- */
+      let rawCoverage = data.coverage;
+      if (typeof rawCoverage === "string") {
+        rawCoverage = rawCoverage.replace("%", "");
+      }
+
+      let coveragePct = Math.floor(Number(rawCoverage) || 0);
+
+      // ✅ FIX: If no active holds, coverage must be 100%
+      if (active === 0) {
+        coveragePct = 100;
+      }
+
+      /* -------------------------------
+         EXECUTIVE STRIP
+         ------------------------------- */
       setText("active", active);
       setText("coverage", coveragePct + "%");
 
-      // Detail card
+      /* -------------------------------
+         DETAIL CARD
+         ------------------------------- */
       setText("activeHolds", active);
       setText("completed", completed);
       setText("coverageDetail", coveragePct + "%");
 
-      // Investigation-driven status (baseline)
+      /* -------------------------------
+         STATUS LOGIC
+         ------------------------------- */
       updateLabStatus(active, coveragePct);
 
-      // Timestamp
+      /* -------------------------------
+         LAST UPDATE
+         ------------------------------- */
       setText("lastUpdate", data.lastUpdated || "N/A");
     })
     .catch(err => {
@@ -54,7 +77,7 @@ function loadDashboard() {
 }
 
 /* ===============================
-   🔹 NEW: SCANNER INTEGRATION
+   🔹 SCANNER MAP INTEGRATION
    =============================== */
 
 function updateScannerFromStorage() {
@@ -71,7 +94,7 @@ function updateScannerFromStorage() {
 
   if (!scannerHealthEl || !scannerDetailEl) return;
 
-  // No scanners selected
+  // ✅ No scanners flagged
   if (!scanners.length) {
     scannerHealthEl.textContent = "Online";
     scannerHealthEl.className = "value ok";
@@ -80,7 +103,7 @@ function updateScannerFromStorage() {
     return;
   }
 
-  // One or more scanners flagged
+  // ⚠️ One or more scanners flagged
   scannerHealthEl.textContent = "Attention";
   scannerHealthEl.className = "value warn";
 
@@ -93,7 +116,7 @@ function updateScannerFromStorage() {
 }
 
 /* ===============================
-   STATUS LOGIC (UNCHANGED)
+   STATUS LOGIC (UNCHANGED CORE)
    =============================== */
 
 function updateLabStatus(active, coverage) {
@@ -115,7 +138,7 @@ function updateLabStatus(active, coverage) {
 }
 
 /* ===============================
-   ERROR STATE (UNCHANGED)
+   ERROR STATE
    =============================== */
 
 function showErrorState() {
@@ -137,8 +160,15 @@ function showErrorState() {
   }
 }
 
+function logout() {
+  sessionStorage.clear();
+  localStorage.removeItem("lms_scanner_attention");
+  window.location.href = "login.html";
+}
+
+
 /* ===============================
-   HELPERS (UNCHANGED)
+   HELPERS
    =============================== */
 
 function setText(id, value) {
