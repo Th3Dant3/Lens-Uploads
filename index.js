@@ -34,37 +34,85 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ===============================
-   DASHBOARD DATA
+   DASHBOARD DATA (FINAL)
    =============================== */
 function loadDashboard() {
-  fetch(API_URL)
+  fetch(API_URL + "?t=" + Date.now())
     .then(res => res.json())
     .then(data => {
       const active = Number(data.active ?? 0);
       const completed = Number(data.completed ?? 0);
 
-      let coveragePct = 0;
-      if (typeof data.coverage === "string") {
-        coveragePct = Number(data.coverage.replace("%", ""));
-      } else if (typeof data.coverage === "number") {
-        coveragePct =
-          data.coverage <= 1
-            ? Math.round(data.coverage * 100)
-            : Math.round(data.coverage);
-      }
+      /* -----------------------------
+         COVERAGE (TRUTHFUL)
+         ----------------------------- */
+      let coverageRaw = Number(data.coverage ?? 0);
+      let coveragePct =
+        coverageRaw <= 1
+          ? Math.floor(coverageRaw * 1000) / 10
+          : Math.floor(coverageRaw * 10) / 10;
 
       coveragePct = Math.max(0, Math.min(100, coveragePct));
 
+      /* -----------------------------
+         LAST JOB COMPLETED (BACKEND)
+         ----------------------------- */
+      const lastCompletedStr = data.lastCompletedAt || "N/A";
+      setText("lastUpdate", lastCompletedStr);
+
+      /* -----------------------------
+         TIME SINCE LAST COMPLETION
+         ----------------------------- */
+      const sinceEl = document.getElementById("lastSince");
+      const lastValEl = document.getElementById("lastUpdate");
+
+      lastValEl.classList.remove("ok", "warn", "bad");
+
+      if (lastCompletedStr !== "N/A") {
+        // Rebuild Date from today + time string (safe for same-day ops)
+        const now = new Date();
+        const parsed = new Date(
+          now.toDateString() + " " + lastCompletedStr
+        );
+
+        if (!isNaN(parsed)) {
+          const diffMs = now - parsed;
+          const diffMin = Math.floor(diffMs / 60000);
+
+          sinceEl.textContent =
+            diffMin < 1 ? "just now" : `${diffMin} min ago`;
+
+          // STALE COLOR LOGIC
+          if (diffMin < 5) {
+            lastValEl.classList.add("ok");
+          } else if (diffMin < 15) {
+            lastValEl.classList.add("warn");
+          } else {
+            lastValEl.classList.add("bad");
+          }
+        } else {
+          sinceEl.textContent = "—";
+        }
+      } else {
+        sinceEl.textContent = "No completions yet";
+        lastValEl.classList.add("warn");
+      }
+
+      /* -----------------------------
+         CORE METRICS
+         ----------------------------- */
       setText("active", active);
-      setText("coverage", coveragePct + "%");
       setText("activeHolds", active);
       setText("completed", completed);
+      setText("coverage", coveragePct + "%");
       setText("coverageDetail", coveragePct + "%");
-      setText("lastUpdate", data.lastUpdated || "N/A");
 
       updateLabStatus(active, coveragePct);
     })
-    .catch(() => showErrorState());
+    .catch(err => {
+      console.error("Dashboard data failed", err);
+      showErrorState();
+    });
 }
 
 /* ===============================
@@ -188,7 +236,8 @@ function showErrorState() {
     "completed",
     "coverageDetail",
     "scannerHealth",
-    "lastUpdate"
+    "lastUpdate",
+    "lastSince"
   ].forEach(id => setText(id, "ERR"));
 
   const el = document.getElementById("labStatus");

@@ -253,3 +253,13 @@ footer {
     right: 20px;
   }
 }
+/* =====================================================
+   LAST COMPLETION – TIME SINCE
+   ===================================================== */
+#lastSince {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
