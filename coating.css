@@ -1,0 +1,232 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: #0c1626;
+  color: #e6edf7;
+  margin: 0;
+}
+
+.container {
+  max-width: 1500px;
+  margin: auto;
+  padding: 40px 50px;
+}
+
+/* ===== HEADER ===== */
+h1 {
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: 0.5px;
+  margin-bottom: 35px;
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 35px;
+}
+
+.tab {
+  padding: 10px 22px;
+  background: #18263f;
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #c7d3e5;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.tab:hover {
+  background: #223356;
+}
+
+.tab.active {
+  background: #2f4f7c;
+  color: white;
+  font-weight: 500;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ===== KPI CARDS ===== */
+.summary {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: #18263f;
+  padding: 22px 26px;
+  border-radius: 10px;
+  min-width: 230px;
+  flex: 1;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.card h3 {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8ea6c9;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.card h2 {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ===== TABLE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #18263f;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 14px;
+  text-align: center;
+  font-size: 14px;
+}
+
+th {
+  background: #1f2f4f;
+  font-weight: 500;
+  color: #9bb4d6;
+}
+
+tr {
+  transition: 0.15s ease;
+}
+
+tr:hover {
+  background: rgba(90, 130, 200, 0.12);
+  cursor: pointer;
+}
+
+/* ===== CHART CARDS ===== */
+.trend-card,
+.full-width-chart {
+  background: #18263f;
+  padding: 28px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ===== MODE BUTTONS ===== */
+.mode-btn {
+  padding: 8px 18px;
+  background: #18263f;
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #c7d3e5;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.mode-btn.active {
+  background: #2f4f7c;
+  color: white;
+}
+
+/* ===== MODAL ===== */
+#chartModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 18, 32, 0.95);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#chartModal.active {
+  display: flex;
+}
+
+#modalContent {
+  width: 92%;
+  max-width: 1000px;
+  max-height: 90%;
+  background: #18263f;
+  border-radius: 12px;
+  padding: 30px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  font-size: 22px;
+  cursor: pointer;
+  color: #9bb4d6;
+}
+
+.pulse {
+  animation: pulseAnim 0.6s ease;
+}
+
+@keyframes pulseAnim {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+.flow-legend {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 12px;
+  color: #E6F1FF;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.flow-legend .dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.dot.green { background: #00ff88; }
+.dot.yellow { background: #ffcc00; }
+.dot.red { background: #ff3b3b; }
+
+.top-nav {
+  margin-bottom: 10px;
+}
+
+.back-btn {
+  background: #2f6fed;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  background: #1f55c7;
+}

@@ -49,7 +49,7 @@ function login() {
 }
 
 /**************************************************
- * HANDLE RESPONSE
+ * HANDLE RESPONSE (UPDATED WITH VISIBILITY FETCH)
  **************************************************/
 function handleLoginResponse(data, originalPassword) {
   const messageEl = document.getElementById("message");
@@ -70,18 +70,42 @@ function handleLoginResponse(data, originalPassword) {
     messageEl.style.color = "#6ee7b7";
     messageEl.textContent = "Login successful";
 
+    // Store base session data
     sessionStorage.setItem("lms_logged_in", "true");
     sessionStorage.setItem("lms_user", data.username);
     sessionStorage.setItem("lms_role", data.role);
 
-    setTimeout(() => {
-      window.location.replace("index.html");
-    }, 600);
+    // 🔥 Fetch visibility permissions
+    fetch(
+      `${AUTH_API}?action=visibility&username=${encodeURIComponent(data.username)}`
+    )
+      .then(res => res.json())
+      .then(visData => {
+        if (visData.status === "SUCCESS") {
+          sessionStorage.setItem(
+            "lms_visibility",
+            JSON.stringify(visData.visibility)
+          );
+        } else {
+          sessionStorage.setItem("lms_visibility", "{}");
+        }
+
+        // Redirect after permissions stored
+        window.location.replace("index.html");
+      })
+      .catch(() => {
+        // If visibility fails, still allow login but hide everything
+        sessionStorage.setItem("lms_visibility", "{}");
+        window.location.replace("index.html");
+      });
+
+    return;
   }
 }
 
+
 /**************************************************
- * SET PASSWORD
+ * SET PASSWORD (UPDATED WITH VISIBILITY FETCH)
  **************************************************/
 function setPassword(username, password) {
   const messageEl = document.getElementById("message");
@@ -99,14 +123,38 @@ function setPassword(username, password) {
         return;
       }
 
+      // Store base session info
       sessionStorage.setItem("lms_logged_in", "true");
       sessionStorage.setItem("lms_user", username);
-      window.location.replace("index.html");
+
+      // 🔥 Fetch visibility permissions
+      fetch(
+        `${AUTH_API}?action=visibility&username=${encodeURIComponent(username)}`
+      )
+        .then(res => res.json())
+        .then(visData => {
+          if (visData.status === "SUCCESS") {
+            sessionStorage.setItem(
+              "lms_visibility",
+              JSON.stringify(visData.visibility)
+            );
+          } else {
+            sessionStorage.setItem("lms_visibility", "{}");
+          }
+
+          window.location.replace("index.html");
+        })
+        .catch(() => {
+          // If visibility fails, hide everything
+          sessionStorage.setItem("lms_visibility", "{}");
+          window.location.replace("index.html");
+        });
     })
     .catch(() => {
       messageEl.textContent = "Password setup failed";
     });
 }
+
 
 /**************************************************
  * ENTER KEY

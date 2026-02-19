@@ -156,6 +156,7 @@ function applyVisibilityRules(visibility) {
     "Investigation Hold": "#investigation-card",
     "True Curve": "#truecurve-card",
     "Tools": "#tools-card",
+    "Coating": "#coating-card",   // 🔥 ADD THIS
     "Admin": ".admin-only"
   };
 
